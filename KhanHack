@@ -1,0 +1,771 @@
+// ==Script de Usuário==
+// @name Solucionador de problemas da Khan Academy
+// @versão 2.1
+// @description Aqui está um solucionador da Khan Academy!
+// @autor Logzilla6
+// @match https://www.khanacademy.org/*
+// @grant nenhum
+// @namespace https://greasyfork.org/users/783447
+// ==/UserScript==
+ 
+(função () {
+  deixe overlayHTML = ` <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<div id="caixa">
+<button class="ou" id="accordian">Alternar</button>
+    <div class="ou" id="box2">
+        <p style="color:white;"> KhanHack </p>
+        <section><label>Resposta: [<label id="ans1">...</label>]</label></section>
+        <section><label></label></section>
+        <seção><label> </label></seção>
+        <section><label>Próxima e última resposta: [<label id="ans2"></label>]</label></section>
+        <section><label></label></section>
+        <section><label>M para ocultar "Alternar"</label></section>
+ 
+ 
+    </div>
+ 
+</div>
+<estilo>
+#caixa {
+    índice z: 1090;
+    posição: fixa;
+    superior: 0;
+    certo: 0;}
+#caixa2 {
+    preenchimento: 15px;
+    margem inferior: 5px;
+    Mostrar nenhum};
+seção {
+    exibição: flexível;
+    justificar-conteúdo: espaço entre;margem:5px;}
+.ou {
+    cor de fundo: #072357;
+    espaçamento entre letras: 2px;
+ 
+    peso da fonte: nenhum;
+    tamanho da fonte: 11px;
+    família de fontes: 'Roboto', sem serifa;
+    cor branca;}
+p { alinhamento de texto: centro; borda inferior: 1px branco sólido;}
+#ytlink { borda:0;}
+#ytlink a{ cor:limão;}
+#acordeão {
+    largura: 100%;
+    borda:0;
+    cursor: ponteiro;}
+rótulo {peso da fonte: negrito;}
+entrada {
+    margem superior: automático;
+    margem inferior: automático;
+    transformar: escala(1.3);}
+input:hover {cursor: ponteiro;}
+entrada:foco { caixa-sombra: 0 0 10px #9ecaed;}
+input[type=caixa de seleção] { transform: scale(2.2);outline=none;}
+input[type=radio] { border-top: auto;}
+input[type=cor] {largura: 50px;}
+.verificado {
+    altura: 20px;
+    largura: 20px;
+    sombra da caixa: -1px -2px 5px cinza;
+    borda: 3px cinza sólido;
+    cor de fundo: #17e34d;
+    margem superior: automático;
+    margem inferior: automático;
+    sombra da caixa: 2 2 2px #a0a0a0;
+    largura:20px;
+    transformar: escala(1.5);}
+.notchecked {cor de fundo: vermelho;}
+ 
+ 
+ 
+ 
+ 
+._eqjto6h {
+    -webkit-box-pack: centro !importante;
+    -ms-flex-pack: centro! Importante;
+    -webkit-box-align: centro! Importante;
+    -ms-flex-align: centro! Importante;
+    exibição: -webkit-box! Importante;
+    exibição: -moz-box! Importante;
+    exibição: -ms-flexbox! Importante;
+    exibição: -webkit-flex !importante;
+    exibição: flex !importante;
+    -webkit-align-items: centro! Importante;
+    alinhar itens: centro! Importante;
+    -webkit-justify-content: centro! Importante;
+    justificar-conteúdo: centro! Importante;
+    posição: absoluto! Importante;
+    largura máxima: 5% !importante;
+    largura: 48
+pixels
+!importante;
+    topo: 0
+pixels
+!importante;
+    altura: 0% !importante;
+    cor: branco! Importante;
+    -webkit-user-select: nenhum! Importante;
+    -moz-user-select: nenhum! Importante;
+    -ms-user-select: nenhum! Importante;
+    seleção de usuário: nenhum! Importante;
+    -webkit-tap-highlight-color: transparente! Importante;
+    plano de fundo: nenhum !importante;
+    borda: nenhuma !importante;
+    certo: 0
+pixels
+!importante;
+}
+ 
+ 
+</estilo>
+`
+ 
+ 
+ 
+ 
+ 
+função get(x) { retornar documento.getElementById(x); }
+ 
+deixe overlay = document.createElement("div");
+    sobreposição.innerHTML = sobreposiçãoHTML;
+    document.body.appendChild (sobreposição);
+ 
+deixe acc = get("acordado"),
+    aimbot = get("aimbot");
+ 
+acc.onclick = função() {
+    deixe painel = get("box2");
+    if (panel.style.display == "grade") painel.style.display = "none";
+    senão { painel.style.display = "grade"; }
+}
+  document.addEventListener('keydown', (evento) => {
+    if (event.key === 'm') {
+ 
+      deixe painel2 = get("caixa2")
+      painel2.style.display = "nenhum"
+      deixe painel = get("acordado");
+      if (panel.style.display == "none" && panel2.style.display == "none") panel.style.display = "grid";
+    senão {painel.style.display = "nenhum"; }
+ 
+      se (panel2.style.display == "grade" && painel.style.display == "grade") {
+        painel2.style.display = "nenhum"
+        painel.style.display = "nenhum"
+      }
+ 
+      retornar;
+    }
+}); 
+ 
+ 
+ 
+    'usar estrito';
+    janela.carregado = falso;
+ 
+ 
+ 
+    alert("Olhe no canto superior direito para 'Toggle'")
+    classe Resposta {
+        construtor(resposta, tipo) {
+            this.body = resposta;
+            este.tipo = tipo;
+        }
+ 
+        obter isMultiChoice() {
+            return this.type == "múltipla_escolha";
+        }
+ 
+        obter isFreeResponse() {
+            retorne this.type == "free_response";
+        }
+ 
+        obter isExpressão() {
+            retornar this.type == "expressão";
+        }
+ 
+        obter isDropdown() {
+            return this.type == "suspenso";
+        }
+ 
+        registro() {
+            resposta const = this.body;
+            estilo const = "cor: coral; -webkit-text-stroke: .5px preto; tamanho da fonte: 24px; peso da fonte: negrito;";
+ 
+            resposta.map(ans => {
+                if (typeof ans == "string") {
+                    if (ans.includes("web+gráfico")) {
+                        this.body[this.body.indexOf(ans)] = "";
+                        this.printImage(ans);
+                    } outro {
+                        resposta[resposta.indexOf(ans)] = ans.replaceAll("$", "");
+                    }
+                }
+            });
+ 
+            const texto = resposta.join("\n");
+            se (texto) {
+                console.log(`${text.trim()}`, estilo);
+            }
+        }
+ 
+        printImage(ans) {
+            const url = ans.replace("![](web+graphie", "https").replace()", ".svg");
+            imagem const = nova imagem();
+ 
+            imagem.src = url;
+            imagem.onload = () => {
+                const estiloimagem = [
+                    'tamanho da fonte: 1px;',
+                    'altura da linha: ', this.height % 2, 'px;',
+                    'preenchimento: ', this.height * .5, 'px', this.width * .5, 'px;',
+                    'tamanho do plano de fundo:', this.width, 'px', this.height, 'px;',
+                    'plano de fundo: url(', url, ');'
+                ].juntar(' ');
+                console.log('',imageStyle);
+            };
+        }
+    }
+ 
+    const originalFetch = janela.fetch;
+    janela.fetch=função(){
+        retornar originalFetch.apply(this, argumentos).then((res) => {
+            if (res.url.includes("/getAssessmentItem")) {
+                const clone = res.clone();
+                clone.json().then(json => {
+                    deixe item, pergunta;
+ 
+                    tentar {
+                        item = json.data.assessmentItem.item.itemData;
+                        pergunta = JSON.parse(item).pergunta;
+                    } pegar {
+                        deixe errorIteration = () => { return localStorage.getItem("error_iter") || 0; }
+                        localStorage.setItem("error_iter", errorIteration() + 1);
+ 
+                        if (errorIteration() < 4) {
+                            retornar localização.reload();
+                        } outro {
+                            return alert("Ocorreu um erro");
+                        }
+                    }
+ 
+                    if (!question) retornar;
+ 
+                    Object.keys(question.widgets).map(widgetName => {
+                        switch (nomedowidget.split(" ")[0]) {
+                            caso "entrada numérica":
+                                retornar freeResponseAnswerFrom(question).log();
+                            caso "rádio":
+                                return multipleChoiceAnswerFrom(question).log();
+                            caso "expressão":
+                                return expressãoAnswerFrom(question).log();
+                            caso "suspenso":
+                                retornar menu suspensoAnswerFrom(question).log();
+                        }
+                    });
+                });
+            }
+ 
+            retornar res;
+        })
+    }
+ 
+    function freeResponseAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.opções?.respostas) {
+                retornar widget.options.answers.map(resposta => {
+                    se (resposta.status == "correto") {
+                      //alert('resposta livre')
+                       var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (resposta.valor)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (resposta.valor)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                    }
+                 });
+ 
+            }
+        }).flat().filter((val) => { return val !== indefinido; });
+ 
+        return nova resposta(resposta, "free_response");
+    }
+ 
+    function multipleChoiceAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.opções?.escolhas) {
+                retornar widget.options.choices.map(choice => {
+                    if (escolha.correta) {
+  						//alert('multiescolha')
+                      var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (choice.content)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (choice.content)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+                    }
+                });
+            }
+        }).flat().filter((val) => { return val !== indefinido; });
+ 
+ 
+        return nova resposta(resposta, "múltipla_escolha");
+    }
+ 
+    function expressãoAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.options?.answerForms) {
+                retornar widget.options.answerForms.map(resposta => {
+                    if (Object.values(resposta).includes("correto")) {
+                        //alerta('expressão')
+                      var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (resposta.valor)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (resposta.valor)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+                    }
+                });
+            }
+        }).plano();
+ 
+        return nova Resposta(resposta, "expressão");
+    }
+ 
+    função suspensaAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.opções?.escolhas) {
+                retornar widget.options.choices.map(choice => {
+                    if (escolha.correta) {
+                        //alert('dropdown')
+                      var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (choice.content)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (choice.content)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+                    }
+                });
+            }
+ 
+        }).plano();
+ 
+        return nova resposta(resposta, "dropdown");
+ 
+    }
+})();// ==Script de Usuário==
+// @name Solucionador de problemas da Khan Academy
+// @versão 2.1
+// @description Aqui está um solucionador da Khan Academy!
+// @autor Logzilla6
+// @match https://www.khanacademy.org/*
+// @grant nenhum
+// @namespace https://greasyfork.org/users/783447
+// ==/UserScript==
+ 
+(função () {
+  deixe overlayHTML = ` <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<div id="caixa">
+<button class="ou" id="accordian">Alternar</button>
+    <div class="ou" id="box2">
+        <p style="color:white;"> KhanHack </p>
+        <section><label>Resposta: [<label id="ans1">...</label>]</label></section>
+        <section><label></label></section>
+        <seção><label> </label></seção>
+        <section><label>Próxima e última resposta: [<label id="ans2"></label>]</label></section>
+        <section><label></label></section>
+        <section><label>M para ocultar "Alternar"</label></section>
+ 
+ 
+    </div>
+ 
+</div>
+<estilo>
+#caixa {
+    índice z: 1090;
+    posição: fixa;
+    superior: 0;
+    certo: 0;}
+#caixa2 {
+    preenchimento: 15px;
+    margem inferior: 5px;
+    Mostrar nenhum};
+seção {
+    exibição: flexível;
+    justificar-conteúdo: espaço entre;margem:5px;}
+.ou {
+    cor de fundo: #072357;
+    espaçamento entre letras: 2px;
+ 
+    peso da fonte: nenhum;
+    tamanho da fonte: 11px;
+    família de fontes: 'Roboto', sem serifa;
+    cor branca;}
+p { alinhamento de texto: centro; borda inferior: 1px branco sólido;}
+#ytlink { borda:0;}
+#ytlink a{ cor:limão;}
+#acordeão {
+    largura: 100%;
+    borda:0;
+    cursor: ponteiro;}
+rótulo {peso da fonte: negrito;}
+entrada {
+    margem superior: automático;
+    margem inferior: automático;
+    transformar: escala(1.3);}
+input:hover {cursor: ponteiro;}
+entrada:foco { caixa-sombra: 0 0 10px #9ecaed;}
+input[type=caixa de seleção] { transform: scale(2.2);outline=none;}
+input[type=radio] { border-top: auto;}
+input[type=cor] {largura: 50px;}
+.verificado {
+    altura: 20px;
+    largura: 20px;
+    sombra da caixa: -1px -2px 5px cinza;
+    borda: 3px cinza sólido;
+    cor de fundo: #17e34d;
+    margem superior: automático;
+    margem inferior: automático;
+    sombra da caixa: 2 2 2px #a0a0a0;
+    largura:20px;
+    transformar: escala(1.5);}
+.notchecked {cor de fundo: vermelho;}
+ 
+ 
+ 
+ 
+ 
+._eqjto6h {
+    -webkit-box-pack: centro !importante;
+    -ms-flex-pack: centro! Importante;
+    -webkit-box-align: centro! Importante;
+    -ms-flex-align: centro! Importante;
+    exibição: -webkit-box! Importante;
+    exibição: -moz-box! Importante;
+    exibição: -ms-flexbox! Importante;
+    exibição: -webkit-flex !importante;
+    exibição: flex !importante;
+    -webkit-align-items: centro! Importante;
+    alinhar itens: centro! Importante;
+    -webkit-justify-content: centro! Importante;
+    justificar-conteúdo: centro! Importante;
+    posição: absoluto! Importante;
+    largura máxima: 5% !importante;
+    largura: 48
+pixels
+!importante;
+    topo: 0
+pixels
+!importante;
+    altura: 0% !importante;
+    cor: branco! Importante;
+    -webkit-user-select: nenhum! Importante;
+    -moz-user-select: nenhum! Importante;
+    -ms-user-select: nenhum! Importante;
+    seleção de usuário: nenhum! Importante;
+    -webkit-tap-highlight-color: transparente! Importante;
+    plano de fundo: nenhum !importante;
+    borda: nenhuma !importante;
+    certo: 0
+pixels
+!importante;
+}
+ 
+ 
+</estilo>
+`
+ 
+ 
+ 
+ 
+ 
+função get(x) { retornar documento.getElementById(x); }
+ 
+deixe overlay = document.createElement("div");
+    sobreposição.innerHTML = sobreposiçãoHTML;
+    document.body.appendChild (sobreposição);
+ 
+deixe acc = get("acordado"),
+    aimbot = get("aimbot");
+ 
+acc.onclick = função() {
+    deixe painel = get("box2");
+    if (panel.style.display == "grade") painel.style.display = "none";
+    senão { painel.style.display = "grade"; }
+}
+  document.addEventListener('keydown', (evento) => {
+    if (event.key === 'm') {
+ 
+      deixe painel2 = get("caixa2")
+      painel2.style.display = "nenhum"
+      deixe painel = get("acordado");
+      if (panel.style.display == "none" && panel2.style.display == "none") panel.style.display = "grid";
+    senão {painel.style.display = "nenhum"; }
+ 
+      se (panel2.style.display == "grade" && painel.style.display == "grade") {
+        painel2.style.display = "nenhum"
+        painel.style.display = "nenhum"
+      }
+ 
+      retornar;
+    }
+}); 
+ 
+ 
+ 
+    'usar estrito';
+    janela.carregado = falso;
+ 
+ 
+ 
+    alert("Olhe no canto superior direito para 'Toggle'")
+    classe Resposta {
+        construtor(resposta, tipo) {
+            this.body = resposta;
+            este.tipo = tipo;
+        }
+ 
+        obter isMultiChoice() {
+            return this.type == "múltipla_escolha";
+        }
+ 
+        obter isFreeResponse() {
+            retorne this.type == "free_response";
+        }
+ 
+        obter isExpressão() {
+            retornar this.type == "expressão";
+        }
+ 
+        obter isDropdown() {
+            return this.type == "suspenso";
+        }
+ 
+        registro() {
+            resposta const = this.body;
+            estilo const = "cor: coral; -webkit-text-stroke: .5px preto; tamanho da fonte: 24px; peso da fonte: negrito;";
+ 
+            resposta.map(ans => {
+                if (typeof ans == "string") {
+                    if (ans.includes("web+gráfico")) {
+                        this.body[this.body.indexOf(ans)] = "";
+                        this.printImage(ans);
+                    } outro {
+                        resposta[resposta.indexOf(ans)] = ans.replaceAll("$", "");
+                    }
+                }
+            });
+ 
+            const texto = resposta.join("\n");
+            se (texto) {
+                console.log(`${text.trim()}`, estilo);
+            }
+        }
+ 
+        printImage(ans) {
+            const url = ans.replace("![](web+graphie", "https").replace()", ".svg");
+            imagem const = nova imagem();
+ 
+            imagem.src = url;
+            imagem.onload = () => {
+                const estiloimagem = [
+                    'tamanho da fonte: 1px;',
+                    'altura da linha: ', this.height % 2, 'px;',
+                    'preenchimento: ', this.height * .5, 'px', this.width * .5, 'px;',
+                    'tamanho do plano de fundo:', this.width, 'px', this.height, 'px;',
+                    'plano de fundo: url(', url, ');'
+                ].juntar(' ');
+                console.log('',imageStyle);
+            };
+        }
+    }
+ 
+    const originalFetch = janela.fetch;
+    janela.fetch=função(){
+        retornar originalFetch.apply(this, argumentos).then((res) => {
+            if (res.url.includes("/getAssessmentItem")) {
+                const clone = res.clone();
+                clone.json().then(json => {
+                    deixe item, pergunta;
+ 
+                    tentar {
+                        item = json.data.assessmentItem.item.itemData;
+                        pergunta = JSON.parse(item).pergunta;
+                    } pegar {
+                        deixe errorIteration = () => { return localStorage.getItem("error_iter") || 0; }
+                        localStorage.setItem("error_iter", errorIteration() + 1);
+ 
+                        if (errorIteration() < 4) {
+                            retornar localização.reload();
+                        } outro {
+                            return alert("Ocorreu um erro");
+                        }
+                    }
+ 
+                    if (!question) retornar;
+ 
+                    Object.keys(question.widgets).map(widgetName => {
+                        switch (nomedowidget.split(" ")[0]) {
+                            caso "entrada numérica":
+                                retornar freeResponseAnswerFrom(question).log();
+                            caso "rádio":
+                                return multipleChoiceAnswerFrom(question).log();
+                            caso "expressão":
+                                return expressãoAnswerFrom(question).log();
+                            caso "suspenso":
+                                retornar menu suspensoAnswerFrom(question).log();
+                        }
+                    });
+                });
+            }
+ 
+            retornar res;
+        })
+    }
+ 
+    function freeResponseAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.opções?.respostas) {
+                retornar widget.options.answers.map(resposta => {
+                    se (resposta.status == "correto") {
+                      //alert('resposta livre')
+                       var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (resposta.valor)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (resposta.valor)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                    }
+                 });
+ 
+            }
+        }).flat().filter((val) => { return val !== indefinido; });
+ 
+        return nova resposta(resposta, "free_response");
+    }
+ 
+    function multipleChoiceAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.opções?.escolhas) {
+                retornar widget.options.choices.map(choice => {
+                    if (escolha.correta) {
+  						//alert('multiescolha')
+                      var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (choice.content)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (choice.content)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+                    }
+                });
+            }
+        }).flat().filter((val) => { return val !== indefinido; });
+ 
+ 
+        return nova resposta(resposta, "múltipla_escolha");
+    }
+ 
+    function expressãoAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.options?.answerForms) {
+                retornar widget.options.answerForms.map(resposta => {
+                    if (Object.values(resposta).includes("correto")) {
+                        //alerta('expressão')
+                      var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (resposta.valor)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (resposta.valor)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+                    }
+                });
+            }
+        }).plano();
+ 
+        return nova Resposta(resposta, "expressão");
+    }
+ 
+    função suspensaAnswerFrom(pergunta) {
+        const resposta = Object.values(question.widgets).map((widget) => {
+            if (widget.opções?.escolhas) {
+                retornar widget.options.choices.map(choice => {
+                    if (escolha.correta) {
+                        //alert('dropdown')
+                      var ans1 = document.getElementById('ans1').innerHTML
+                       var ans2 = document.getElementById('ans2').innerHTML
+ 
+                      document.getElementById('ans2').innerHTML = (choice.content)
+ 
+                       se (ans2 == "") {
+                        document.getElementById('ans1').innerHTML = (choice.content)                        
+                      }
+                      outro {
+                        document.getElementById('ans1').innerHTML = (ans2)
+                      }
+                    }
+                });
+            }
+ 
+        }).plano();
+ 
+        return nova resposta(resposta, "dropdown");
+ 
+    }
+})();
